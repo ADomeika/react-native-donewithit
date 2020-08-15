@@ -10,8 +10,9 @@ export default function MessagesScreen() {
   const [messages, setMessages] = useState([
     {
       id: 1,
-      title: 'Title 1',
-      description: 'Description 1',
+      title: 'Title 1, with a lorem ipsum, whats up everybody, hows it going',
+      description:
+        'Description 1, lorem ipsum dolor sit amet bla bla bla bla suppp',
       image: require('../assets/jacket.jpg'),
     },
     {
