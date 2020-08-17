@@ -1,28 +1,35 @@
-import React from 'react';
-import { FlatList, StyleSheet, Text, View } from 'react-native';
+import React, { useEffect } from 'react';
+import { FlatList, StyleSheet, ActivityIndicator } from 'react-native';
 
-import Screen from '../components/Screen';
 import Card from '../components/Card';
 import colors from '../config/colors';
+import listingsApi from '../api/listings';
+import routes from '../navigation/routes';
+import Screen from '../components/Screen';
+import AppText from '../components/AppText';
+import AppButton from '../components/AppButton';
+import AppActivityIndicator from '../components/AppActivityIndicator';
+import useApi from '../hooks/useApi';
 
-const listings = [
-  {
-    id: 1,
-    title: 'Red Jacket for Sale',
-    price: 100,
-    image: require('../assets/jacket.jpg'),
-  },
-  {
-    id: 2,
-    title: 'Other Jacket for Sale',
-    price: 90,
-    image: require('../assets/jacket.jpg'),
-  },
-];
+export default function ListingsScreen({ navigation }) {
+  const { data: listings, error, loading, request: loadListings } = useApi(
+    listingsApi.getListings
+  );
 
-export default function ListingsScreen() {
+  useEffect(() => {
+    loadListings();
+  }, []);
+
   return (
     <Screen style={styles.screen}>
+      {error && (
+        <>
+          <AppText>Could not retrieve the listings.</AppText>
+          <AppButton title='Retry' onPress={loadListings} />
+        </>
+      )}
+      {/* <AppActivityIndicator visible={loading} /> */}
+      <ActivityIndicator animating={loading} size='large' />
       <FlatList
         data={listings}
         keyExtractor={(listing) => listing.id.toString()}
@@ -30,7 +37,9 @@ export default function ListingsScreen() {
           <Card
             title={item.title}
             subTitle={'$' + item.price}
-            image={item.image}
+            imageUrl={item.images[0].url}
+            thumbnailUrl={item.images[0].thumbnailUrl}
+            onPress={() => navigation.navigate(routes.LISTING_DETAILS, item)}
           />
         )}
       />
