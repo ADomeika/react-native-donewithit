@@ -8,7 +8,6 @@ import routes from '../navigation/routes';
 import Screen from '../components/Screen';
 import AppText from '../components/AppText';
 import AppButton from '../components/AppButton';
-import AppActivityIndicator from '../components/AppActivityIndicator';
 import useApi from '../hooks/useApi';
 
 export default function ListingsScreen({ navigation }) {

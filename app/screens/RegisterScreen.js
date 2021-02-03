@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { StyleSheet, Image, ActivityIndicator } from 'react-native';
 import * as Yup from 'yup';
 
-import authApi from '../api/auth';
 import usersApi from '../api/users';
 import Screen from '../components/Screen';
 import {
@@ -11,10 +10,9 @@ import {
   SubmitButton,
   ErrorMessage,
 } from '../components/forms';
-import useAuth from '../auth/useAuth';
 import useApi from '../hooks/useApi';
-import AppActivityIndicator from '../components/AppActivityIndicator';
 import Overlay from '../components/Overlay';
+import useAuth from '../auth/useAuth';
 
 const validationSchema = Yup.object().shape({
   name: Yup.string().required().label('Name'),
@@ -24,7 +22,6 @@ const validationSchema = Yup.object().shape({
 
 export default function RegisterScreen() {
   const registerApi = useApi(usersApi.register);
-  const loginApi = useApi(authApi.login);
   const { login } = useAuth();
   const [error, setError] = useState(null);
 
@@ -42,22 +39,16 @@ export default function RegisterScreen() {
 
     setError(null);
 
-    const { data: authToken } = await loginApi.request(
-      userInfo.email,
-      userInfo.password
-    );
-
-    login(authToken);
+    login(result.data);
   };
 
   return (
     <>
-      {registerApi.loading ||
-        (loginApi.loading && (
-          <Overlay>
-            <ActivityIndicator size='large' animating />
-          </Overlay>
-        ))}
+      {registerApi.loading && (
+        <Overlay>
+          <ActivityIndicator size='large' animating />
+        </Overlay>
+      )}
       <Screen style={styles.container}>
         <Image source={require('../assets/logo-red.png')} style={styles.logo} />
 

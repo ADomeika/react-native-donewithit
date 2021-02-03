@@ -14,7 +14,7 @@ export default useAuth = () => {
 
   const login = (authToken) => {
     const user = jwtDecode(authToken);
-    setUser(user);
+    setUser(user); // user.user_id
 
     authStorage.storeToken(authToken);
   };

@@ -7,12 +7,12 @@ import FeedNavigator from './FeedNavigator';
 import ListingEditScreen from '../screens/ListingEditScreen';
 import NewListingButton from './NewListingButton';
 import routes from './routes';
-import useNotifications from '../hooks/useNotifications';
+// import useNotifications from '../hooks/useNotifications';
 
 const Tab = createBottomTabNavigator();
 
 export default AppNavigator = () => {
-  useNotifications();
+  // useNotifications();
 
   return (
     <Tab.Navigator>
