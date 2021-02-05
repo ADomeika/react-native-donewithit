@@ -1,70 +1,98 @@
 import * as firebase from 'firebase';
 import 'firebase/database';
 import 'firebase/storage';
+import { encode, decode } from 'base-64';
+global.atob = decode;
+global.btoa = encode;
 
-import useAuth from '../auth/useAuth';
+function snapshotToArray(snapshot) {
+  const returnArr = [];
+
+  snapshot.forEach((childSnapshot) => {
+    const item = childSnapshot.val();
+    item.key = childSnapshot.key;
+
+    returnArr.push(item);
+  });
+
+  return returnArr;
+};
 
 const getListings = async () => {
   try {
     const snapshot = await firebase.database().ref('listings').once('value');
-    console.log(snapshot.val());
-    return { ok: true, data: snapshot.val() };
+    const arr = snapshotToArray(snapshot);
+    const items = [];
+    try {
+      await arr.reduce((p, item) => {
+        return p.then(_ => new Promise(async (resolve, reject) => {
+          try {
+            const imageUrl = await firebase
+              .storage()
+              .ref()
+              .child(`listings/${item.key}/image-1.jpg`)
+              .getDownloadURL();
+            item.images = [imageUrl];
+            items.push(item);
+            return resolve();
+          } catch (error) {
+            return reject(error);
+          }
+        }))
+      }, Promise.resolve());
+      return { ok: true, data: items };
+    } catch (error) {
+      return { data: { error } };
+    }
   } catch (error) {
     return { data: { error } };
   }
 };
 
-// const addListing = async (listing, onUploadProgress) => {
-//   const { user } = useAuth();
-//   const {
-//     title,
-//     price,
-//     category: { value: category },
-//     description,
-//     images
-//   } = listing;
+const addListing = async (user, listing, onUploadProgress) => {
+  const {
+    title,
+    price,
+    category: { value: category },
+    description,
+    images
+  } = listing;
 
-//   try {
-//     const result = await firebase.database(`listings/${user.uid}/`).ref('listings').set({
-//       title,
-//       price,
-//       category,
-//       description
-//     });
-//   } catch (error) {
-    
-//   }
-// };
+  try {
+    const listingRef = await firebase.database().ref('listings').push();
 
+    await images.reduce((p, image, i) => {
+      return p.then(_ => new Promise(async (resolve, reject) => {
+        try {
+          await firebase
+            .storage()
+            .ref()
+            .child(`listings/${listingRef.key}/image-${i + 1}.jpg`)
+            .putString(image.base64, 'base64', {
+              contentType: 'image/jpeg',
+            });
+          return resolve();
+        } catch (error) {
+          return reject(error);
+        }
+      }))
+    }, Promise.resolve());
 
-import client from './client';
+    onUploadProgress(50);
 
-const endpoint = '/listings';
-
-// const getListings = () => client.get(endpoint);
-
-const addListing = (listing, onUploadProgress) => {
-  const data = new FormData();
-  data.append('title', listing.title);
-  data.append('price', listing.price);
-  data.append('categoryId', listing.category.value);
-  data.append('description', listing.description);
-  listing.images.forEach((image, index) =>
-    data.append('images', {
-      name: 'image' + index,
-      type: 'image/jpeg',
-      uri: image,
-    })
-  );
-
-  if (listing.location) {
-    data.append('location', JSON.stringify(listing.location));
+    await listingRef.set({
+      title,
+      price,
+      category,
+      description,
+      user: user.user_id,
+    });
+    onUploadProgress(100);
+    return { ok: true };
+  } catch (error) {
+    console.log(error);
+    return { data: { error } };
   }
-
-  return client.post(endpoint, data, {
-    onUploadProgress: (progress) =>
-      onUploadProgress(progress.loaded / progress.total),
-  });
 };
 
 export default {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, Keyboard, Alert } from 'react-native';
+import { StyleSheet, Keyboard, Alert } from 'react-native';
 import * as Yup from 'yup';
 import { Notifications } from 'expo';
 

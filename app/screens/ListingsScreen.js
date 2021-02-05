@@ -31,13 +31,13 @@ export default function ListingsScreen({ navigation }) {
       <ActivityIndicator animating={loading} size='large' />
       <FlatList
         data={listings}
-        keyExtractor={(listing) => listing.id.toString()}
+        keyExtractor={(listing) => listing.key.toString()}
         renderItem={({ item }) => (
           <Card
             title={item.title}
             subTitle={'$' + item.price}
-            imageUrl={item.images[0].url}
-            thumbnailUrl={item.images[0].thumbnailUrl}
+            imageUrl={item.images[0]}
+            thumbnailUrl={item.images[0]}
             onPress={() => navigation.navigate(routes.LISTING_DETAILS, item)}
           />
         )}

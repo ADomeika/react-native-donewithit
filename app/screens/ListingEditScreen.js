@@ -14,6 +14,7 @@ import FormImagePicker from '../components/forms/FormImagePicker';
 import listingsApi from '../api/listings';
 import useLocation from '../hooks/useLocation';
 import UploadScreen from './UploadScreen';
+import useAuth from '../auth/useAuth';
 
 const validationSchema = Yup.object().shape({
   images: Yup.array().min(1, 'Please select at least 1 image.'),
@@ -30,6 +31,7 @@ const categories = [
 ];
 
 export default function ListingEditScreen() {
+  const { user } = useAuth();
   const location = useLocation();
   const [uploadScreenVisible, setUploadScreenVisible] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -38,6 +40,7 @@ export default function ListingEditScreen() {
     setProgress(0);
     setUploadScreenVisible(true);
     const result = await listingsApi.addListing(
+      user,
       { ...listing, location },
       (progress) => setProgress(progress)
     );

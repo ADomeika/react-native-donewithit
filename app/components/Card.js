@@ -8,7 +8,7 @@ import AppText from './AppText';
 export default function Card({
   title,
   subTitle,
-  imageUrl,
+  imageUrl = "",
   onPress,
   thumbnailUrl,
 }) {

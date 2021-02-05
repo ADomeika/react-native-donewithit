@@ -2,8 +2,6 @@ import React from 'react';
 import {
   StyleSheet,
   View,
-  KeyboardAvoidingView,
-  Platform,
   ScrollView,
 } from 'react-native';
 import AppText from '../components/AppText';
@@ -17,29 +15,24 @@ export default function ListingDetailsScreen({ route }) {
 
   return (
     <ScrollView>
-      <KeyboardAvoidingView
-        behavior='position'
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 100}
-      >
-        <Image
-          style={styles.image}
-          uri={listing.images[0].url}
-          preview={{ uri: listing.images[0].thumbnailUrl }}
-          tint='light'
-        />
-        <View style={styles.detailsContainer}>
-          <AppText style={styles.title}>{listing.title}</AppText>
-          <AppText style={styles.price}>${listing.price}</AppText>
-          <View style={styles.userContainer}>
-            <ListItem
-              image={require('../assets/jacket.jpg')}
-              title='Adomas Domeika'
-              subTitle='5 Listings'
-            />
-          </View>
-          <ContactSellerForm listing={listing} />
+      <Image
+        style={styles.image}
+        uri={listing.images[0]}
+        preview={{ uri: listing.images[0] }}
+        tint='light'
+      />
+      <View style={styles.detailsContainer}>
+        <AppText style={styles.title}>{listing.title}</AppText>
+        <AppText style={styles.price}>${listing.price}</AppText>
+        <View style={styles.userContainer}>
+          <ListItem
+            image={require('../assets/jacket.jpg')}
+            title='Adomas Domeika'
+            subTitle='5 Listings'
+          />
         </View>
-      </KeyboardAvoidingView>
+        <ContactSellerForm listing={listing} />
+      </View>
     </ScrollView>
   );
 }
