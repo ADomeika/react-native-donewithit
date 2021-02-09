@@ -12,15 +12,13 @@ const login = async ({ email, password }) => {
   }
 }
 
-// export const logout = async () => {
-//   try {
-//     await firebase.auth().signOut()
-//     console.log('Signed Out!');
-//     return 'Success!';
-//   } catch (error) {
-//     console.error(error);
-//     return 'Invalid!';
-//   }
-// }
+const logout = async () => {
+  try {
+    await firebase.auth().signOut();
+    return { ok: true };
+  } catch (error) {
+    return { data: { error: 'Error signing out!' } };
+  }
+}
 
-export default { login };
+export default { login, logout };

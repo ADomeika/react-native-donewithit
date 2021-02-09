@@ -45,6 +45,7 @@ const getListings = async () => {
       return { data: { error } };
     }
   } catch (error) {
+    console.log(error);
     return { data: { error } };
   }
 };
@@ -60,25 +61,18 @@ const addListing = async (user, listing, onUploadProgress) => {
 
   try {
     const listingRef = await firebase.database().ref('listings').push();
+    const imageCount = images.length;
 
-    await images.reduce((p, image, i) => {
-      return p.then(_ => new Promise(async (resolve, reject) => {
-        try {
-          await firebase
-            .storage()
-            .ref()
-            .child(`listings/${listingRef.key}/image-${i + 1}.jpg`)
-            .putString(image.base64, 'base64', {
-              contentType: 'image/jpeg',
-            });
-          return resolve();
-        } catch (error) {
-          return reject(error);
-        }
-      }))
-    }, Promise.resolve());
+    const promises = images.map(async (image, i) => {
+      await firebase
+        .storage()
+        .ref()
+        .child(`listings/${listingRef.key}/image-${i + 1}.jpg`)
+        .put(image.blob);
+      onUploadProgress(((100 / imageCount) * (i + 1)) / 100);
+    });
 
-    onUploadProgress(50);
+    await Promise.all(promises);
 
     await listingRef.set({
       title,

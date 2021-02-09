@@ -40,6 +40,5 @@ const styles = StyleSheet.create({
     flex: 1,
     margin: -10,
     padding: 10,
-    lineHeight: 20,
   }
 });

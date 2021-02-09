@@ -7,6 +7,7 @@ import ListItem from '../components/ListItem';
 import ListItemSeparator from '../components/ListItemSeparator';
 import Screen from '../components/Screen';
 import useAuth from '../auth/useAuth';
+import authApi from '../api/auth';
 
 const menuItems = [
   {
@@ -15,6 +16,7 @@ const menuItems = [
       name: 'format-list-bulleted',
       backgroundColor: colors.primary,
     },
+    targetScreen: 'Listings',
   },
   {
     title: 'My Messages',
@@ -28,6 +30,11 @@ const menuItems = [
 
 export default function AccountScreen({ navigation }) {
   const { user, logout } = useAuth();
+
+  const handleLogout = async () => {
+    await authApi.logout();
+    logout();
+  };
 
   return (
     <Screen style={styles.screen}>
@@ -60,7 +67,7 @@ export default function AccountScreen({ navigation }) {
       <ListItem
         title='Logout'
         IconComponent={<Icon name='logout' backgroundColor='#ffe66d' />}
-        onPress={logout}
+        onPress={handleLogout}
       />
     </Screen>
   );

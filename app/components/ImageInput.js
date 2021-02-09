@@ -43,9 +43,22 @@ export default function ImageInput({ image, onChangeImage }) {
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         quality: 0.6,
-        base64: true,
       });
       if (!result.cancelled) {
+        const blob = await new Promise((resolve, reject) => {
+          const xhr = new XMLHttpRequest();
+          xhr.onload = function() {
+            resolve(xhr.response);
+          };
+          xhr.onerror = function(e) {
+            console.log(e);
+            reject(new TypeError('Network request failed'));
+          };
+          xhr.responseType = 'blob';
+          xhr.open('GET', result.uri, true);
+          xhr.send(null);
+        });
+        result.blob = blob;
         onChangeImage(result);
       }
     } catch (error) {

@@ -9,14 +9,17 @@ import Screen from '../components/Screen';
 import AppText from '../components/AppText';
 import AppButton from '../components/AppButton';
 import useApi from '../hooks/useApi';
+import listingsSubs from '../subscriptions/listings';
 
-export default function ListingsScreen({ navigation }) {
+export default function ListingsScreen({ navigation, route }) {
   const { data: listings, error, loading, request: loadListings } = useApi(
     listingsApi.getListings
   );
 
   useEffect(() => {
     loadListings();
+    console.log('useEffect');
+    // listingsSubs.subscribe();
   }, []);
 
   return (
@@ -27,7 +30,6 @@ export default function ListingsScreen({ navigation }) {
           <AppButton title='Retry' onPress={loadListings} />
         </>
       )}
-      {/* <AppActivityIndicator visible={loading} /> */}
       <ActivityIndicator animating={loading} size='large' />
       <FlatList
         data={listings}

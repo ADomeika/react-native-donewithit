@@ -12,7 +12,10 @@ import authStorage from './app/auth/storage';
 import { navigationRef } from './app/navigation/rootNavigation';
 import firebaseConfig from './app/config/firebase';
 
-firebase.initializeApp(firebaseConfig);
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+}
+console.disableYellowBox = true;
 
 export default function App() {
   const [user, setUser] = useState(null);
